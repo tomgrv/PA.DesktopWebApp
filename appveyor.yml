@@ -1,0 +1,40 @@
+branches:
+ # whitelist
+
+  # blacklist
+  except:
+    - develop
+    - gh-pages
+
+image: Visual Studio 2015
+configuration: Release
+platform: Any CPU
+skip_tags: true
+
+assembly_info:
+  patch: false
+  
+before_build:
+- cmd: nuget restore PA.DesktopWebApp.sln
+
+build:
+  project: PA.DesktopWebApp.sln			# path to Visual Studio solution or project
+  publish_nuget: false				# package projects with .nuspec files and push to artifacts
+  publish_nuget_symbols: true     	# generate and publish NuGet symbol packages
+  include_nuget_references: true	# add -IncludeReferencedProjects option while packaging NuGet artifacts
+  verbosity: normal
+
+test: off
+
+artifacts:
+- path: '**/PA.*.nupkg'
+
+deploy:
+- provider: Environment
+  name: nuget.org
+  on:
+    branch: master
+- provider: Environment
+  name: github.com
+  on:
+    branch: master
